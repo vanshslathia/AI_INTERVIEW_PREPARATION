@@ -6,24 +6,27 @@ main{
     justify-content: center;
     align-items: center;
 
-.form-container{
-    min-width: 350px;
 
-    display: flex;
-    flex-direction:column ;
-    gap: 1rem;
-}
+    .form-container{
+        min-width: 350px;
 
-form{
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    form{
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
 
     .input-group{
         display: flex;
         flex-direction: column;
+
         gap: 0.5rem;
+
 
         input{
             border: none;
@@ -37,6 +40,5 @@ form{
     a{
         color: #e1034d;
         text-decoration: none;
-        
     }
 }
