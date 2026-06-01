@@ -179,6 +179,25 @@ GEMINI_API_KEY=
 ```
 
 ---
+# 🌐 Live Demo
+
+### Frontend (Vercel)
+
+🚀 https://ai-interview-preparation-navy.vercel.app/
+
+### Backend API (Render)
+
+⚙️ https://ai-interview-preparation-vpcf.onrender.com
+
+### Demo Credentials (Optional)
+
+```text
+Email: demo@example.com
+Password: demo123
+```
+
+> Note: The backend may take a few seconds to wake up on the first request because it is hosted on Render's free tier.
+------------------
 
 # 🔑 API Features
 
