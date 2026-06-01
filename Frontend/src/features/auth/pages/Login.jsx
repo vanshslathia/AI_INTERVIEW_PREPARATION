@@ -2,6 +2,8 @@ import React,{useState} from 'react'
 import { useNavigate, Link } from 'react-router'
 import "../auth.form.scss"
 import { useAuth } from '../hooks/useAuth'
+import LoadingScreen from '../../../components/LoadingScreen'
+import PasswordInput from '../../../components/PasswordInput'
 
 const Login = () => {
 
@@ -18,30 +20,46 @@ const Login = () => {
     }
 
     if(loading){
-        return (<main><h1>Loading.......</h1></main>)
+        return (
+            <LoadingScreen
+                variant="auth"
+                title="Signing you in"
+                message="Verifying your credentials"
+            />
+        )
     }
 
 
     return (
-        <main>
-            <div className="form-container">
-                <h1>Login</h1>
-                <form onSubmit={handleSubmit}>
-                    <div className="input-group">
-                        <label htmlFor="email">Email</label>
-                        <input
-                            onChange={(e) => { setEmail(e.target.value) }}
-                            type="email" id="email" name='email' placeholder='Enter email address' />
+        <main className="auth-page">
+            <div className="auth-page__ambient" aria-hidden="true" />
+            <div className="auth-page__grid" aria-hidden="true" />
+            <div className="auth-card">
+                <div className="auth-card__border">
+                    <div className="auth-card__inner form-container">
+                        <header className="auth-card__brand">
+                            <span className="auth-card__logo" aria-hidden="true">AI</span>
+                            <h1 className="auth-card__title">Login</h1>
+                            <p className="auth-card__subtitle">Sign in to access your personalized interview strategies.</p>
+                        </header>
+                        <form onSubmit={handleSubmit}>
+                            <div className="input-group">
+                                <label htmlFor="email">Email</label>
+                                <input
+                                    onChange={(e) => { setEmail(e.target.value) }}
+                                    type="email" id="email" name='email' placeholder='Enter email address' />
+                            </div>
+                            <PasswordInput
+                                id="password"
+                                name="password"
+                                placeholder="Enter password"
+                                onChange={(e) => { setPassword(e.target.value) }}
+                            />
+                            <button className='button primary-button' type="submit">Login</button>
+                        </form>
+                        <p className="auth-card__footer">Don't have an account? <Link to={"/register"} >Register</Link></p>
                     </div>
-                    <div className="input-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            onChange={(e) => { setPassword(e.target.value) }}
-                            type="password" id="password" name='password' placeholder='Enter password' />
-                    </div>
-                    <button className='button primary-button' >Login</button>
-                </form>
-                <p>Don't have an account? <Link to={"/register"} >Register</Link> </p>
+                </div>
             </div>
         </main>
     )

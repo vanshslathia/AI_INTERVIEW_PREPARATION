@@ -60,7 +60,11 @@ export async function getMe() {
         return response.data
 
     } catch (err) {
-        console.log(err)
+        // 401 is expected when no session cookie exists (logged out / first visit)
+        if (err.response?.status !== 401) {
+            console.error(err)
+        }
+        return null
     }
 
 }

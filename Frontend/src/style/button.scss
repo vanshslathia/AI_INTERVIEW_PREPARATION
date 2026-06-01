@@ -1,20 +1,26 @@
-.button{
+@use 'variables' as *;
+@use 'mixins' as *;
 
+.button {
     border: none;
     outline: none;
     padding-inline: 1.5rem;
-    padding-block: 0.75rem;
-    border-radius: 1rem;
+    padding-block: 0.85rem;
+    border-radius: $radius-md;
     cursor: pointer;
+    font-family: $font-sans;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: transform $duration-normal $ease-out-expo,
+        box-shadow $duration-normal,
+        background-position $duration-slow;
 
-    transition: all 0.3s ease-in-out;
-
-    &.primary-button{
-        background-color: #e1034d;
-        color: white;
+    &.primary-button {
+        @include btn-primary;
+        width: 100%;
     }
 
-    &:active{
-        transform: scale(0.9);
+    &:active {
+        transform: scale(0.98);
     }
 }

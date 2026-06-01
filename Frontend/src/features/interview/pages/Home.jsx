@@ -2,36 +2,59 @@ import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
+import LoadingScreen from '../../../components/LoadingScreen'
+import UserSessionBar from '../../../components/UserSessionBar'
+import ResumeUpload from '../../../components/ResumeUpload'
 
 const Home = () => {
 
     const { loading, generateReport,reports } = useInterview()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ generateError, setGenerateError ] = useState("")
+    const [ selectedResume, setSelectedResume ] = useState(null)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
-    const handleGenerateReport = async () => {
+    const handleGenerateReport = async (e) => {
+        e?.preventDefault?.()
+        setGenerateError("")
+
         const resumeFile = resumeInputRef.current.files[ 0 ]
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+
+        if (!data?._id) {
+            setGenerateError(
+                "Could not generate your interview plan. Your session may have expired — log out, log in again, and ensure VITE_API_URL matches your backend."
+            )
+            return
+        }
+
         navigate(`/interview/${data._id}`)
     }
 
     if (loading) {
         return (
-            <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
-            </main>
+            <LoadingScreen
+                variant="ai"
+                title="Building your interview plan"
+            />
         )
     }
 
     return (
         <div className='home-page'>
+            <div className="home-page__ambient" aria-hidden="true" />
 
             {/* Page Header */}
             <header className='page-header'>
-                <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
+                <div className="page-header__top">
+                    <div className="page-header__title-group">
+                        <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
+                    </div>
+                    <UserSessionBar />
+                </div>
                 <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
             </header>
 
@@ -69,21 +92,12 @@ const Home = () => {
                             <h2>Your Profile</h2>
                         </div>
 
-                        {/* Upload Resume */}
-                        <div className='upload-section'>
-                            <label className='section-label'>
-                                Upload Resume
-                                <span className='badge badge--best'>Best Results</span>
-                            </label>
-                            <label className='dropzone' htmlFor='resume'>
-                                <span className='dropzone__icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
-                                </span>
-                                <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
-                            </label>
-                        </div>
+                        <ResumeUpload
+                            inputRef={resumeInputRef}
+                            selectedFile={selectedResume}
+                            onFileChange={setSelectedResume}
+                            onFileRemove={() => setSelectedResume(null)}
+                        />
 
                         {/* OR Divider */}
                         <div className='or-divider'><span>OR</span></div>
@@ -113,12 +127,19 @@ const Home = () => {
                 {/* Card Footer */}
                 <div className='interview-card__footer'>
                     <span className='footer-info'>AI-Powered Strategy Generation &bull; Approx 30s</span>
+                    <div className="interview-card__footer-actions">
+                        {generateError && (
+                            <p className="generate-error" role="alert">{generateError}</p>
+                        )}
                     <button
+                        type="button"
                         onClick={handleGenerateReport}
-                        className='generate-btn'>
+                        className='generate-btn'
+                        disabled={loading}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" /></svg>
                         Generate My Interview Strategy
                     </button>
+                    </div>
                 </div>
             </div>
 

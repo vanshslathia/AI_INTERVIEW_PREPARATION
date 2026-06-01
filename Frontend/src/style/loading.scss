@@ -1,0 +1,120 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'animations' as *;
+
+.loading-screen {
+    position: relative;
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $bg-deep;
+    color: $text-primary;
+    font-family: $font-sans;
+    overflow: hidden;
+    animation: fade-in 0.4s ease both;
+
+    &__backdrop {
+        @include ambient-gradient-bg;
+        position: absolute;
+        inset: 0;
+    }
+
+    &__content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $space-xl;
+        padding: $space-xl;
+        text-align: center;
+        @include fade-up-stagger(0.1s);
+    }
+
+    &__orb {
+        position: relative;
+        width: 88px;
+        height: 88px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__orb-core {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: $gradient-brand;
+        box-shadow: 0 0 40px rgba($accent-primary, 0.6), 0 0 80px rgba($accent-secondary, 0.3);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    &__orb-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        border-top-color: $accent-primary;
+        border-right-color: $accent-secondary;
+        animation: spin-gradient 1.2s linear infinite;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 6px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-bottom-color: rgba($accent-magenta, 0.8);
+            border-left-color: rgba($accent-pink, 0.5);
+            animation: spin-gradient 1.8s linear infinite reverse;
+        }
+    }
+
+    &__title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        margin: 0;
+        color: $text-primary;
+    }
+
+    &__status {
+        position: relative;
+        height: 1.5rem;
+        min-width: 280px;
+        margin: 0;
+    }
+
+    &__step {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        font-size: 0.875rem;
+        color: $text-secondary;
+        white-space: nowrap;
+        opacity: 0;
+        animation: loading-step 9s $ease-out-expo infinite;
+
+        &:nth-child(1) { animation-delay: 0s; }
+        &:nth-child(2) { animation-delay: 3s; }
+        &:nth-child(3) { animation-delay: 6s; }
+    }
+
+    &--auth,
+    &--simple {
+        .loading-screen__step {
+            animation: none;
+            opacity: 1;
+            position: static;
+            transform: none;
+            width: auto;
+
+            &:nth-child(2),
+            &:nth-child(3) { display: none; }
+        }
+    }
+
+}

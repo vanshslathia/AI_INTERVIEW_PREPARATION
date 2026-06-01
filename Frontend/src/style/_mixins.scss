@@ -1,0 +1,150 @@
+@use 'variables' as *;
+@use 'animations' as *;
+
+@mixin glass-panel($blur: 16px) {
+    background: $bg-card;
+    backdrop-filter: blur($blur);
+    -webkit-backdrop-filter: blur($blur);
+    border: 1px solid $border-subtle;
+    box-shadow: $shadow-md, inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+@mixin gradient-border-card($radius: $radius-xl) {
+    position: relative;
+    border-radius: $radius;
+    padding: 1px;
+    background: $gradient-border;
+    background-size: 200% 200%;
+    animation: shimmer 8s linear infinite;
+
+    > * {
+        border-radius: calc(#{$radius} - 1px);
+    }
+}
+
+@mixin focus-ring {
+    outline: none;
+    border-color: $border-focus;
+    box-shadow: 0 0 0 3px rgba($accent-primary, 0.2), 0 0 24px rgba($accent-primary, 0.12);
+}
+
+@mixin input-field {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: $bg-input;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    color: $text-primary;
+    font-family: $font-sans;
+    font-size: 0.9375rem;
+    transition: border-color $duration-normal, box-shadow $duration-normal, background $duration-normal;
+
+    &::placeholder {
+        color: $text-muted;
+    }
+
+    &:hover {
+        border-color: rgba($accent-primary, 0.25);
+    }
+
+    &:focus {
+        @include focus-ring;
+    }
+}
+
+@mixin btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-sm;
+    padding: 0.85rem 1.5rem;
+    background: $gradient-brand;
+    background-size: 200% auto;
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    box-shadow: 0 4px 24px rgba($accent-primary, 0.35);
+    transition: transform $duration-normal $ease-out-expo,
+        box-shadow $duration-normal,
+        background-position $duration-slow;
+
+    &:hover {
+        background-position: right center;
+        box-shadow: 0 8px 32px rgba($accent-primary, 0.45);
+        transform: translateY(-2px);
+    }
+
+    &:active {
+        transform: translateY(0) scale(0.98);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $accent-primary;
+        outline-offset: 3px;
+    }
+}
+
+@mixin card-hover-lift {
+    transition: transform $duration-normal $ease-out-expo,
+        box-shadow $duration-normal,
+        border-color $duration-normal;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: $shadow-md, $shadow-glow;
+        border-color: rgba($accent-primary, 0.25);
+    }
+}
+
+@mixin fade-up-stagger($delay: 0ms) {
+    animation: fade-up 0.7s $ease-out-expo $delay both;
+}
+
+@mixin ambient-gradient-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+
+    &::before,
+    &::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        animation: float-orb 18s ease-in-out infinite;
+    }
+
+    &::before {
+        width: 480px;
+        height: 480px;
+        top: -120px;
+        right: -80px;
+        background: radial-gradient(circle, rgba($accent-primary, 0.18) 0%, transparent 70%);
+    }
+
+    &::after {
+        width: 400px;
+        height: 400px;
+        bottom: -100px;
+        left: -60px;
+        background: radial-gradient(circle, rgba($accent-secondary, 0.14) 0%, transparent 70%);
+        animation-delay: -6s;
+    }
+}
+
+@mixin respond-to($breakpoint) {
+    @if $breakpoint == 'sm' {
+        @media (min-width: 480px) { @content; }
+    } @else if $breakpoint == 'md' {
+        @media (min-width: 768px) { @content; }
+    } @else if $breakpoint == 'lg' {
+        @media (min-width: 1024px) { @content; }
+    } @else if $breakpoint == 'xl' {
+        @media (min-width: 1440px) { @content; }
+    }
+}
