@@ -74,6 +74,10 @@ async function loginUserController(req, res) {
 
     const { email, password } = req.body
 
+    console.log("========== LOGIN ==========");
+    console.log("Email received:", email);
+    console.log("Password received:", password ? "YES" : "NO");
+    
     const user = await userModel.findOne({ email })
 
     if (!user) {
