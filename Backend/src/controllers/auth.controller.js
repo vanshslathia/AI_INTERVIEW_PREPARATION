@@ -71,54 +71,6 @@ async function registerUserController(req, res) {
  * @access Public
  */
 async function loginUserController(req, res) {
-
-    const { email, password } = req.body
-
-    console.log("========== LOGIN ==========");
-    console.log("Email received:", email);
-    console.log("Password received:", password ? "YES" : "NO");
-
-    const user = await userModel.findOne({ email })
-
-    if (!user) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password)
-
-    if (!isPasswordValid) {
-        return res.status(400).json({
-            message: "Invalid email or password"
-        })
-    }
-
-    const token = jwt.sign(
-        { id: user._id, username: user.username },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-    )
-
-    res.cookie("token", token, authCookieOptions)
-
-    res.status(200).json({
-        message: "User loggedIn successfully.",
-        user: {
-            id: user._id,
-            username: user.username,
-            email: user.email
-        }
-    })
-}
-
-
-/**
- * @name logoutUserController
- * @description clear token from user cookie and add the token in blacklist
- * @access public
- */
-async function loginUserController(req, res) {
     try {
         const { email, password } = req.body;
 
@@ -181,6 +133,26 @@ async function loginUserController(req, res) {
             message: "Internal server error"
         });
     }
+}
+
+
+/**
+ * @name logoutUserController
+ * @description clear token from user cookie and add the token in blacklist
+ * @access public
+ */
+async function logoutUserController(req, res) {
+    const token = req.cookies.token
+
+    if (token) {
+        await tokenBlacklistModel.create({ token })
+    }
+
+    res.clearCookie("token", authCookieOptions)
+
+    res.status(200).json({
+        message: "User logged out successfully"
+    })
 }
 
 /**
