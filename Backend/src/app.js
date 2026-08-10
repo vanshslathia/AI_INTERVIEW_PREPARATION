@@ -36,6 +36,12 @@ app.use(cors({
 const authRouter = require("./routes/auth.routes")
 const interviewRouter = require("./routes/interview.routes")
 
+// Health check
+app.get("/", (req, res) => {
+    res.status(200).json({
+        message: "AI Interview Preparation Backend is running"
+    });
+});
 
 /* using all the routes here */
 app.use("/api/auth", authRouter)
