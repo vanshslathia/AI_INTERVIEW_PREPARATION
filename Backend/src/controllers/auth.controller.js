@@ -77,7 +77,7 @@ async function loginUserController(req, res) {
     console.log("========== LOGIN ==========");
     console.log("Email received:", email);
     console.log("Password received:", password ? "YES" : "NO");
-    
+
     const user = await userModel.findOne({ email })
 
     if (!user) {
@@ -118,18 +118,69 @@ async function loginUserController(req, res) {
  * @description clear token from user cookie and add the token in blacklist
  * @access public
  */
-async function logoutUserController(req, res) {
-    const token = req.cookies.token
+async function loginUserController(req, res) {
+    try {
+        const { email, password } = req.body;
 
-    if (token) {
-        await tokenBlacklistModel.create({ token })
+        console.log("LOGIN EMAIL:", email);
+        console.log("PASSWORD RECEIVED:", !!password);
+
+        const user = await userModel.findOne({ email });
+
+        console.log("USER FOUND:", !!user);
+
+        if (!user) {
+            console.log("❌ USER NOT FOUND");
+
+            return res.status(400).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+            password,
+            user.password
+        );
+
+        console.log("PASSWORD MATCH:", isPasswordValid);
+
+        if (!isPasswordValid) {
+            console.log("❌ PASSWORD WRONG");
+
+            return res.status(400).json({
+                message: "Invalid email or password"
+            });
+        }
+
+        console.log("✅ LOGIN SUCCESS");
+
+        const token = jwt.sign(
+            {
+                id: user._id,
+                username: user.username
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
+
+        res.cookie("token", token, authCookieOptions);
+
+        return res.status(200).json({
+            message: "User loggedIn successfully.",
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        console.error("LOGIN ERROR:", error);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
     }
-
-    res.clearCookie("token", authCookieOptions)
-
-    res.status(200).json({
-        message: "User logged out successfully"
-    })
 }
 
 /**
